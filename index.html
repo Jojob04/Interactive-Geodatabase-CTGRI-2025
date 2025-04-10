@@ -20,6 +20,7 @@
             height: 100%;
             padding: 0;
             margin: 0;
+            font-family: Calibri, sans-serif;
         }
         #chartContainer {
             position: absolute;
@@ -32,14 +33,402 @@
             z-index: 1000;
             display: none;
         }
+        /* Overlay for password protection */
+        #pageOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.3);
+            z-index: 1999;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+        /* Add blur effect */
+        #map.blur {
+            filter: blur(8px);
+            pointer-events: none;
+        }
+        .blur-until-password {
+            filter: blur(5px);
+            pointer-events: none;
+        }
+        #passwordPrompt {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+            z-index: 2000;
+        }
+        /* Custom Sidebar Menu */
+        #sidebarMenu {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: white;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+            z-index: 1000;
+            width: 300px;
+            overflow: hidden;
+        }
+        .menu-header {
+            background-color: #8CD454;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        .menu-item {
+            padding: 12px 15px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #333;
+            cursor: pointer;
+        }
+        .menu-item:hover {
+            background-color: #f5f5f5;
+        }
+        .menu-arrow {
+            color: #FF9900;
+            font-weight: bold;
+        }
+        .menu-logo {
+            text-align: center;
+            padding: 15px 0;
+            background-color: #FFFFFF;
+        }
+        .menu-logo img {
+            max-width: 220px;
+        }
+        .menu-subtitle {
+            padding: 8px 15px;
+            text-align: center;
+            font-size: 12px;
+            position: relative;
+            margin-bottom: 15px;
+        }
+        .menu-subtitle::before, .menu-subtitle::after {
+            content: "";
+            position: absolute;
+            left: 15px;
+            right: 15px;
+            height: 2px;
+            background-color: #8CD454;
+        }
+        .menu-subtitle::before {
+            top: 0;
+        }
+        .menu-subtitle::after {
+            bottom: 0;
+        }
+        .layerDialog {
+            display: none;
+            position: absolute;
+            left: 320px;
+            top: 10px;
+            background-color: white;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+            z-index: 1001;
+            min-width: 250px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .layerDialog h3 {
+            margin: 0 0 10px 0;
+            padding-right: 50px;
+        }
+        .layerDialog .closeBtn {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+        }
+        .layer-legend {
+            margin-top: 10px;
+            border-top: 1px solid #eee;
+            padding-top: 10px;
+        }
+        .layer-legend-item {
+            display: flex;
+            align-items: center;
+            margin: 5px 0;
+        }
+        .layer-legend-swatch {
+            width: 20px;
+            height: 20px;
+            margin-right: 8px;
+            border: 1px solid #ccc;
+        }
+        .layer-legend-line {
+            width: 20px;
+            height: 3px;
+            margin-right: 8px;
+        }
+        .layer-legend-icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 8px;
+            text-align: center;
+            line-height: 20px;
+            border: 1px solid #000;
+        }
+        /* Map elements container */
+        #mapElementsContainer {
+            position: fixed; /* Changed to fixed positioning */
+            bottom: 20px; /* Position from the bottom */
+            left: 10px;
+            width: 300px; /* Same width as menu */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            z-index: 1000;
+            pointer-events: auto; /* Ensure elements are clickable */
+        }
+        /* North Arrow */
+        #northArrow {
+            width: 100px;
+            margin-bottom: 5px;
+        }
+        /* Scale Bar Container */
+        #scaleBarContainer {
+            background-color: rgba(255, 255, 255, 0.7);
+            padding: 5px 10px;
+            border-radius: 5px;
+            width: 80%;
+            text-align: center;
+            margin-bottom: 5px;
+        }
+        /* Coordinates Container */
+        #coordsContainer {
+            background-color: rgba(255, 255, 255, 0.7);
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            width: 80%;
+            text-align: center;
+        }
+        /* Position controls on right side */
+        .leaflet-top.leaflet-left {
+            position: absolute;
+            right: 10px;
+            left: auto !important;
+        }
+        .leaflet-top.leaflet-right {
+            right: 60px !important;
+        }
+        /* Hide default layer control */
+        .leaflet-control-layers {
+            display: none !important;
+        }
+        /* Hide default scale control */
+        .leaflet-control-scale {
+            display: none !important;
+        }
+        /* Custom attribution */
+        .leaflet-control-attribution {
+            font-size: 11px !important;
+        }
+        /* Ensure menu doesn't interfere with map elements */
+        @media screen and (max-height: 800px) {
+            #mapElementsContainer {
+                bottom: 10px; /* Smaller bottom margin for small screens */
+            }
+            #northArrow {
+                width: 80px; /* Smaller north arrow for small screens */
+            }
+        }
         </style>
         <title></title>
     </head>
     <body>
+        <div id="pageOverlay"></div>
         <div id="map">
         </div>
         <div id="chartContainer">
             <canvas id="slopeChart"></canvas>
+        </div>
+        <div id="sidebarMenu" class="blur-until-password">
+            <div class="menu-logo">
+                <img src="logo/CTGRI_Logo.jpg" alt="CleanTech Global Renewables" />
+            </div>
+            <div class="menu-subtitle">
+                Interactive Geodatabase Map for Renewable Projects
+            </div>
+            <div class="menu-header">Display Options</div>
+            <div class="menu-item" id="baseMapOption">Base Map <span class="menu-arrow">▶</span></div>
+            <div class="menu-item" id="gridConnectionsOption">Grid Connections <span class="menu-arrow">▶</span></div>
+            <div class="menu-item" id="renewableContractsOption">Existing Renewable Energy Contracts <span class="menu-arrow">▶</span></div>
+            <div class="menu-item" id="ctgriProjectsOption">CTGRI Projects <span class="menu-arrow">▶</span></div>
+            <div class="menu-item" id="siteSuitabilityOption">Site Suitability <span class="menu-arrow">▶</span></div>
+            <div class="menu-item" id="adminBoundariesOption">Administrative Boundaries <span class="menu-arrow">▶</span></div>
+            <div class="menu-header">Location Tools</div>
+            <div class="menu-item" id="coordInputOption">Input Long-Lat Coordinates</div>
+        </div>
+        
+        <!-- Map Elements Container -->
+        <div id="mapElementsContainer" class="blur-until-password">
+            <!-- North Arrow -->
+            <img src="north_arrow/North Arrow.png" id="northArrow" alt="North">
+            
+            <!-- Scale Bar Container -->
+            <div id="scaleBarContainer">
+                <div id="customScaleBar"></div>
+            </div>
+            
+            <!-- Coordinates Container -->
+            <div id="coordsContainer">
+                <div id="coordinatesDisplay">Lat: 0.000000 | Lng: 0.000000</div>
+            </div>
+        </div>
+        
+        <!-- Layer selection dialogs -->
+        <div id="baseMapDialog" class="layerDialog blur-until-password">
+            <h3>Base Maps</h3>
+            <button class="closeBtn">Close</button>
+            <div id="baseMapLayersList"></div>
+        </div>
+        
+        <div id="gridConnectionsDialog" class="layerDialog">
+            <h3>Grid Connections</h3>
+            <button class="closeBtn">Close</button>
+            <div id="gridConnectionsLayersList"></div>
+            <div class="layer-legend">
+                <h4>NGCP Substation</h4>
+                <div class="layer-legend-item">
+                    <div class="layer-legend-icon" style="color: rgba(255,1,5,1.0); border-color: rgba(255,1,5,1.0);">■</div>
+                    <div>230</div>
+                </div>
+                <div class="layer-legend-item">
+                    <div class="layer-legend-icon" style="color: rgba(29,112,167,1.0); border-color: rgba(29,112,167,1.0);">■</div>
+                    <div>350</div>
+                </div>
+                <div class="layer-legend-item">
+                    <div class="layer-legend-icon" style="color: rgba(29,112,167,1.0); border-color: rgba(29,112,167,1.0);">■</div>
+                    <div>500</div>
+                </div>
+                <h4>NGCP Transmission Line</h4>
+                <div class="layer-legend-item">
+                    <div class="layer-legend-line" style="background-color: rgba(196,60,57,1.0);"></div>
+                    <div>NGCP Transmission Line</div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="renewableContractsDialog" class="layerDialog">
+            <h3>Renewable Energy Contracts</h3>
+            <button class="closeBtn">Close</button>
+            <div id="renewableContractsLayersList"></div>
+            <div class="layer-legend">
+                <h4>Existing WESC as of 2025</h4>
+                <div class="layer-legend-item">
+                    <div class="layer-legend-line" style="background-color: rgba(1,255,251,1.0);"></div>
+                    <div>Existing WESC as of 2025</div>
+                </div>
+                <h4>Existing SEOC as of November 2024</h4>
+                <div class="layer-legend-item">
+                    <div class="layer-legend-line" style="background-color: rgba(255,1,200,1.0);"></div>
+                    <div>Existing SEOC as of November 2024</div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="ctgriProjectsDialog" class="layerDialog">
+            <h3>CTGRI Projects</h3>
+            <button class="closeBtn">Close</button>
+            <div id="ctgriProjectsLayersList"></div>
+            <div class="layer-legend">
+                <h4>Existing Projects with Wind Energy Service Contract</h4>
+                <div class="layer-legend-item">
+                    <div class="layer-legend-line" style="background-color: rgba(1,255,86,1.0); height: 3px;"></div>
+                    <div>Existing Projects with Wind Energy Service Contract</div>
+                </div>
+                <h4>Existing Projects with Solar Energy Operating Contract</h4>
+                <div class="layer-legend-item">
+                    <div class="layer-legend-line" style="background-color: rgba(255,124,1,1.0); height: 2px;"></div>
+                    <div>Existing Projects with Solar Energy Operating Contract</div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="siteSuitabilityDialog" class="layerDialog">
+            <h3>Site Suitability</h3>
+            <button class="closeBtn">Close</button>
+            <div id="siteSuitabilityLayersList"></div>
+            <div class="layer-legend">
+                <h4>Offered Sites for Solar Development</h4>
+                <div class="layer-legend-item">
+                    <div class="layer-legend-line" style="background-color: rgba(255,255,1,1.0);"></div>
+                    <div>Offered Sites for Solar Development</div>
+                </div>
+                <h4>Slope Suitability - Offered Sites</h4>
+                <div class="layer-legend-item">
+                    <div class="layer-legend-swatch" style="background-color: rgba(26,150,65,1.0);"></div>
+                    <div>Highly Acceptable (0-5°)</div>
+                </div>
+                <div class="layer-legend-item">
+                    <div class="layer-legend-swatch" style="background-color: rgba(138,204,98,1.0);"></div>
+                    <div>Acceptable (5-10°)</div>
+                </div>
+                <div class="layer-legend-item">
+                    <div class="layer-legend-swatch" style="background-color: rgba(219,240,158,1.0);"></div>
+                    <div>Marginally Acceptable (10-12°)</div>
+                </div>
+                <div class="layer-legend-item">
+                    <div class="layer-legend-swatch" style="background-color: rgba(254,223,154,1.0);"></div>
+                    <div>Slope Optimization (12-15°)</div>
+                </div>
+                <div class="layer-legend-item">
+                    <div class="layer-legend-swatch" style="background-color: rgba(215,25,28,1.0);"></div>
+                    <div>Not Usable (15° above)</div>
+                </div>
+                <h4>Bathymetry</h4>
+                <div class="layer-legend-item">
+                    <div class="layer-legend-swatch" style="background-color: rgba(1,255,247,1.0);"></div>
+                    <div>-40 - 0 MASL</div>
+                </div>
+                <div class="layer-legend-item">
+                    <div class="layer-legend-swatch" style="background-color: rgba(1,166,255,1.0);"></div>
+                    <div>-50 - -40 MASL</div>
+                </div>
+                <div class="layer-legend-item">
+                    <div class="layer-legend-swatch" style="background-color: rgba(1,39,255,1.0);"></div>
+                    <div>-60 - -50 MASL</div>
+                </div>
+                <div class="layer-legend-item">
+                    <div class="layer-legend-swatch" style="background-color: rgba(3,0,166,1.0);"></div>
+                    <div>> -60 MASL</div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="adminBoundariesDialog" class="layerDialog">
+            <h3>Administrative Boundaries</h3>
+            <button class="closeBtn">Close</button>
+            <div id="adminBoundariesLayersList"></div>
+            <div class="layer-legend">
+                <h4>Administrative Boundaries - Region</h4>
+                <div class="layer-legend-item">
+                    <div class="layer-legend-line" style="background-color: rgba(35,35,35,1.0);"></div>
+                    <div>Administrative Boundaries - Region</div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="passwordPrompt">
+            <label for="passwordInput">Enter Password:</label>
+            <input type="password" id="passwordInput">
+            <button onclick="checkPassword()">Submit</button>
         </div>
         <script src="js/qgis2web_expressions.js"></script>
         <script src="js/leaflet.js"></script>
@@ -261,13 +650,13 @@
                                 }
                             },
                             legend: {
-                                position: 'right',
+                                position: 'bottom',
                                 labels: {
                                     boxWidth: 12,
                                     font: {
                                         size: 10
                                     },
-                                    padding: 8
+                                    padding: 6
                                 }
                             },
                             tooltip: {
@@ -786,7 +1175,7 @@
         {label: '<b>CTGRI - Existing WESC and SEOC</b>', selectAllCheckbox: true, children: [
             {label: '<img src="legend/ExistingProjectswithWindEnergyServiceContract_5.png" /> Existing Projects with Wind Energy Service Contract', layer: layer_ExistingProjectswithWindEnergyServiceContract_5},
             {label: '<img src="legend/ExistingProjectswithSolarEnergyOperatingContract_4.png" /> Existing Projects with Solar Energy Operating Contract ', layer: layer_ExistingProjectswithSolarEnergyOperatingContract_4},
-            {label: 'Bathymetry - Meters Below Sea Level<br /><table><tr><td style="text-align: center;"><img src="legend/BathymetryMetersBelowSeaLevel_3_400MBSL0.png" /></td><td>-40 - 0 MBSL</td></tr><tr><td style="text-align: center;"><img src="legend/BathymetryMetersBelowSeaLevel_3_5040MBSL1.png" /></td><td>-50 - -40 MBSL</td></tr><tr><td style="text-align: center;"><img src="legend/BathymetryMetersBelowSeaLevel_3_6050MBSL2.png" /></td><td>-60 - -50 MBSL</td></tr><tr><td style="text-align: center;"><img src="legend/BathymetryMetersBelowSeaLevel_3_60MBSL3.png" /></td><td>> -60 MBSL</td></tr></table>', layer: layer_BathymetryMetersBelowSeaLevel_3},
+            {label: 'Bathymetry - Meters Below Sea Level<br /><table><tr><td style="text-align: center;"><img src="legend/BathymetryMetersBelowSeaLevel_3_400MBSL0.png" /></td><td>-40 - 0 MASL</td></tr><tr><td style="text-align: center;"><img src="legend/BathymetryMetersBelowSeaLevel_3_5040MBSL1.png" /></td><td>-50 - -40 MASL</td></tr><tr><td style="text-align: center;"><img src="legend/BathymetryMetersBelowSeaLevel_3_6050MBSL2.png" /></td><td>-60 - -50 MASL</td></tr><tr><td style="text-align: center;"><img src="legend/BathymetryMetersBelowSeaLevel_3_60MBSL3.png" /></td><td>> -60 MASL</td></tr></table>', layer: layer_BathymetryMetersBelowSeaLevel_3},
             {label: 'Slope Suitability - Offered Sites <br /><table><tr><td style="text-align: center;"><img src="legend/SlopeSuitabilityOfferedSites_2_HighlyAcceptable050.png" /></td><td>Highly Acceptable (0-5°)</td></tr><tr><td style="text-align: center;"><img src="legend/SlopeSuitabilityOfferedSites_2_Acceptable5101.png" /></td><td>Acceptable (5-10°)</td></tr><tr><td style="text-align: center;"><img src="legend/SlopeSuitabilityOfferedSites_2_MarginallyAcceptable10122.png" /></td><td>Marginally Acceptable (10-12°)</td></tr><tr><td style="text-align: center;"><img src="legend/SlopeSuitabilityOfferedSites_2_SlopeOptimization12153.png" /></td><td>Slope Optimization (12-15°)</td></tr><tr><td style="text-align: center;"><img src="legend/SlopeSuitabilityOfferedSites_2_NotUsable15above4.png" /></td><td>Not Usable (15° above)</td></tr></table>', layer: layer_SlopeSuitabilityOfferedSites_2},]},
             {label: '<img src="legend/AdministrativeBoundariesRegion_1.png" /> Administrative Boundaries - Region', layer: layer_AdministrativeBoundariesRegion_1},
             {label: "Google Satellite", layer: layer_GoogleSatellite_0, radioGroup: 'bm' },]
@@ -906,14 +1295,291 @@
         }
 
         // Add click handler to the Offered Sites layer
-        layer_OfferedSitesforSolarDevelopment_8.on('click', function(e) {
-            const slopeData = calculateSlopeDistribution(e.layer.feature);
-            updateChart(slopeData);
-        });
+        // layer_OfferedSitesforSolarDevelopment_8.on('click', function(e) {
+        //     const slopeData = calculateSlopeDistribution(e.layer.feature);
+        //     updateChart(slopeData);
+        // });
 
         // Add click handler to hide chart when clicking on the map
         map.on('click', function() {
             chartContainer.style.display = 'none';
+        });
+
+        // Function to check password
+        function checkPassword() {
+            var password = document.getElementById('passwordInput').value;
+            if (password === 'CTGRI1GW') {
+                // Remove the overlay
+                document.getElementById('pageOverlay').style.display = 'none';
+                
+                // Remove blur effects
+                document.getElementById('map').classList.remove('blur');
+                document.querySelectorAll('.blur-until-password').forEach(el => {
+                    el.classList.remove('blur-until-password');
+                });
+                
+                // Hide password prompt
+                document.getElementById('passwordPrompt').style.display = 'none';
+                
+                // Initialize the sidebar menu after password is verified
+                initializeSidebarMenu();
+            } else {
+                // Use custom alert for incorrect password
+                var incorrectPasswordAlert = document.createElement('div');
+                incorrectPasswordAlert.textContent = 'Incorrect password';
+                incorrectPasswordAlert.style.position = 'absolute';
+                incorrectPasswordAlert.style.top = '10px';
+                incorrectPasswordAlert.style.left = '50%';
+                incorrectPasswordAlert.style.transform = 'translateX(-50%)';
+                incorrectPasswordAlert.style.backgroundColor = 'rgba(255,0,0,0.8)';
+                incorrectPasswordAlert.style.color = 'white';
+                incorrectPasswordAlert.style.padding = '10px';
+                incorrectPasswordAlert.style.borderRadius = '5px';
+                incorrectPasswordAlert.style.zIndex = '2001'; // Above overlay
+                document.body.appendChild(incorrectPasswordAlert);
+                setTimeout(function() {
+                    document.body.removeChild(incorrectPasswordAlert);
+                }, 2000);
+            }
+        }
+
+        // Initialize the sidebar menu
+        function initializeSidebarMenu() {
+            // Create layer groups
+            const baseMapLayers = {
+                "Google Satellite": layer_GoogleSatellite_0
+            };
+            
+            const gridConnectionsLayers = {
+                "NGCP Substations": layer_NGCPSubstation_10,
+                "NGCP Transmission Lines": layer_NGCPTransmissionLine_9
+            };
+            
+            const renewableContractsLayers = {
+                "Existing WESC as of 2025": layer_ExistingWESCasof2025_7,
+                "Existing SEOC as of November 2024": layer_ExistingSEOCasofNovember2024_6
+            };
+            
+            const ctgriProjectsLayers = {
+                "Existing Projects with Wind Energy Service Contract": layer_ExistingProjectswithWindEnergyServiceContract_5,
+                "Existing Projects with Solar Energy Operating Contract": layer_ExistingProjectswithSolarEnergyOperatingContract_4
+            };
+            
+            const siteSuitabilityLayers = {
+                "Slope Suitability - Offered Sites": layer_SlopeSuitabilityOfferedSites_2,
+                "Offered Sites for Solar Development": layer_OfferedSitesforSolarDevelopment_8,
+                "Bathymetry": layer_BathymetryMetersBelowSeaLevel_3
+            };
+            
+            const adminBoundariesLayers = {
+                "Administrative Boundaries - Region": layer_AdministrativeBoundariesRegion_1
+            };
+            
+            // Function to populate layer lists
+            function populateLayersList(containerId, layers) {
+                const container = document.getElementById(containerId);
+                container.innerHTML = '';
+                
+                for (const [name, layer] of Object.entries(layers)) {
+                    const layerItem = document.createElement('div');
+                    layerItem.style.margin = '8px 0';
+                    
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.id = 'layer_' + name.replace(/\s+/g, '_');
+                    checkbox.checked = map.hasLayer(layer);
+                    checkbox.addEventListener('change', () => {
+                        if (checkbox.checked) {
+                            map.addLayer(layer);
+                        } else {
+                            map.removeLayer(layer);
+                        }
+                    });
+                    
+                    const label = document.createElement('label');
+                    label.htmlFor = checkbox.id;
+                    label.appendChild(document.createTextNode(' ' + name));
+                    
+                    layerItem.appendChild(checkbox);
+                    layerItem.appendChild(label);
+                    container.appendChild(layerItem);
+                }
+            }
+            
+            // Populate all layer lists
+            populateLayersList('baseMapLayersList', baseMapLayers);
+            populateLayersList('gridConnectionsLayersList', gridConnectionsLayers);
+            populateLayersList('renewableContractsLayersList', renewableContractsLayers);
+            populateLayersList('ctgriProjectsLayersList', ctgriProjectsLayers);
+            populateLayersList('siteSuitabilityLayersList', siteSuitabilityLayers);
+            populateLayersList('adminBoundariesLayersList', adminBoundariesLayers);
+            
+            // Set up dialog handling
+            const dialogs = {
+                'baseMapOption': 'baseMapDialog',
+                'gridConnectionsOption': 'gridConnectionsDialog',
+                'renewableContractsOption': 'renewableContractsDialog',
+                'ctgriProjectsOption': 'ctgriProjectsDialog',
+                'siteSuitabilityOption': 'siteSuitabilityDialog',
+                'adminBoundariesOption': 'adminBoundariesDialog'
+            };
+            
+            // Add click event handlers to menu items
+            for (const [menuId, dialogId] of Object.entries(dialogs)) {
+                document.getElementById(menuId).addEventListener('click', () => {
+                    // Hide all dialogs first
+                    document.querySelectorAll('.layerDialog').forEach(el => {
+                        el.style.display = 'none';
+                    });
+                    // Show this dialog
+                    document.getElementById(dialogId).style.display = 'block';
+                });
+            }
+            
+            // Add close button functionality
+            document.querySelectorAll('.closeBtn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    btn.closest('.layerDialog').style.display = 'none';
+                });
+            });
+            
+            // Coordinates input functionality
+            document.getElementById('coordInputOption').addEventListener('click', () => {
+                const lat = prompt('Enter Latitude:');
+                const lng = prompt('Enter Longitude:');
+                
+                if (lat && lng) {
+                    const latNum = parseFloat(lat);
+                    const lngNum = parseFloat(lng);
+                    
+                    if (!isNaN(latNum) && !isNaN(lngNum)) {
+                        map.setView([latNum, lngNum], 14);
+                        L.marker([latNum, lngNum]).addTo(map)
+                            .bindPopup('Coordinates: ' + latNum + ', ' + lngNum)
+                            .openPopup();
+                    } else {
+                        alert('Invalid coordinates. Please enter valid numbers.');
+                    }
+                }
+            });
+            
+            // Add scale bar to custom container
+            const scaleControl = L.control.scale({
+                position: 'bottomleft',
+                imperial: false,
+                metric: true,
+                maxWidth: 200
+            });
+            
+            // Add it to map but it will be hidden by CSS
+            scaleControl.addTo(map);
+            
+            // Create a custom scale bar in our container
+            function updateCustomScaleBar() {
+                // Find the scale elements created by Leaflet
+                const scaleElements = document.querySelectorAll('.leaflet-control-scale-line');
+                if (scaleElements.length > 0) {
+                    // Get the metric scale
+                    const metricScale = scaleElements[0];
+                    // Copy its content to our custom scale
+                    document.getElementById('customScaleBar').innerHTML = metricScale.innerHTML;
+                    document.getElementById('customScaleBar').style.border = '2px solid #333';
+                    document.getElementById('customScaleBar').style.borderTop = 'none';
+                    document.getElementById('customScaleBar').style.textAlign = 'center';
+                    document.getElementById('customScaleBar').style.padding = '0 5px';
+                }
+            }
+            
+            // Update scale on zoom
+            map.on('zoomend', updateCustomScaleBar);
+            // Initial update
+            setTimeout(updateCustomScaleBar, 500);
+            
+            // Add coordinates display functionality
+            map.on('mousemove', function(e) {
+                const lat = e.latlng.lat.toFixed(6);
+                const lng = e.latlng.lng.toFixed(6);
+                document.getElementById('coordinatesDisplay').innerHTML = `Lat: ${lat} | Lng: ${lng}`;
+            });
+            
+            // Make sure the map elements container is properly positioned
+            positionMapElements();
+            
+            // Hide the default layer control
+            document.querySelectorAll('.leaflet-control-layers').forEach(el => {
+                el.style.display = 'none';
+            });
+            
+            // Modify the attribution text
+            const attributionControl = document.querySelector('.leaflet-control-attribution');
+            if (attributionControl) {
+                let existingAttribution = attributionControl.innerHTML;
+                // Add our custom text to the attribution
+                attributionControl.innerHTML = existingAttribution + ' | Last update: 10.04.2025 | &copy;2025 CleanTech Global Renewables Inc.';
+            }
+        }
+        
+        // Function to position map elements properly
+        function positionMapElements() {
+            window.addEventListener('resize', function() {
+                adjustMapElementsPosition();
+            });
+            adjustMapElementsPosition();
+        }
+        
+        function adjustMapElementsPosition() {
+            const menu = document.getElementById('sidebarMenu');
+            const mapElements = document.getElementById('mapElementsContainer');
+            
+            if (!menu || !mapElements) return;
+            
+            // Position map elements at the bottom, ensuring no overlap
+            mapElements.style.bottom = '20px';
+            mapElements.style.left = menu.offsetLeft + 'px';
+        }
+        
+        // Initialize the map when it's ready
+        map.whenReady(function() {
+            // Initially blur the map
+            document.getElementById('map').classList.add('blur');
+            
+            // Set up coordinates tracking even before password is entered
+            // This ensures it works immediately after authentication
+            map.on('mousemove', function(e) {
+                const lat = e.latlng.lat.toFixed(6);
+                const lng = e.latlng.lng.toFixed(6);
+                document.getElementById('coordinatesDisplay').innerHTML = `Lat: ${lat} | Lng: ${lng}`;
+            });
+            
+            // Add scale control that will be used as reference
+            const scaleControl = L.control.scale({
+                position: 'bottomleft',
+                imperial: false,
+                metric: true,
+                maxWidth: 200
+            });
+            
+            // Add it to map but it will be hidden by CSS
+            scaleControl.addTo(map);
+            
+            // Update scale on zoom and initially
+            function updateCustomScaleBar() {
+                const scaleElements = document.querySelectorAll('.leaflet-control-scale-line');
+                if (scaleElements.length > 0) {
+                    const metricScale = scaleElements[0];
+                    const customScale = document.getElementById('customScaleBar');
+                    if (customScale) {
+                        customScale.innerHTML = metricScale.innerHTML;
+                        customScale.style.border = '2px solid #333';
+                        customScale.style.borderTop = 'none';
+                        customScale.style.textAlign = 'center';
+                        customScale.style.padding = '0 5px';
+                    }
+                }
+            }
+            
+            map.on('zoomend', updateCustomScaleBar);
+            setTimeout(updateCustomScaleBar, 500);
         });
         </script>
     </body>
